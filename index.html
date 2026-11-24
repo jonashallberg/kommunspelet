@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Högre eller lägre – kommunupplagan</title>
+<meta name="theme-color" content="#1b1464">
+<style>
+:root{--bg1:#1b1464;--bg2:#3a1c8f;--ink:#fff;--sun:#ffd23f;--a:#ff6b6b;--b:#2ec4b6;--ok:#22c55e;--bad:#ef4444;--card:#ffffff14}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);
+  background:radial-gradient(circle at 15% 10%,#5b2bd6 0,transparent 45%),radial-gradient(circle at 90% 95%,#0e7c86 0,transparent 40%),linear-gradient(160deg,var(--bg1),var(--bg2));
+  background-attachment:fixed;display:flex;flex-direction:column;min-height:100dvh;overflow-x:hidden}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top))}
+h1{font-size:clamp(15px,2.2vw,30px);margin:0;font-weight:800;letter-spacing:-.01em;line-height:1.1}
+h1 small{display:block;font-size:.62em;font-weight:700;color:var(--sun);text-transform:uppercase;letter-spacing:.12em}
+.stats{display:flex;gap:6px}
+.stat{background:var(--card);border-radius:14px;padding:5px 10px;text-align:center;min-width:58px}
+.stat b{display:block;font-size:clamp(17px,2.4vw,34px);line-height:1.05;font-variant-numeric:tabular-nums}
+.stat span{font-size:clamp(9px,1vw,14px);text-transform:uppercase;letter-spacing:.08em;opacity:.75}
+main{flex:1;display:flex;flex-direction:column;padding:4px 16px 10px;gap:10px;max-width:1500px;width:100%;margin:0 auto}
+.q{text-align:center;margin:2px 0}
+.q .chip{display:inline-block;background:var(--sun);color:#1b1464;font-weight:800;border-radius:999px;padding:3px 12px;font-size:clamp(11px,1.2vw,17px);text-transform:uppercase;letter-spacing:.08em}
+.q h2{margin:6px 0 0;font-size:clamp(21px,3.6vw,54px);line-height:1.12;font-weight:800;text-wrap:balance}
+.q h2 em{font-style:normal;color:var(--sun)}
+.duel{flex:1;display:grid;grid-template-columns:1fr;grid-template-rows:1fr 1fr;gap:12px;position:relative;min-height:340px}
+.kort{appearance:none;border:0;font:inherit;color:#fff;cursor:pointer;border-radius:26px;padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  box-shadow:0 8px 0 #0005,0 14px 30px #0004;transition:transform .12s,box-shadow .12s,filter .3s,background .3s;position:relative;overflow:hidden;min-height:150px;touch-action:manipulation}
+.kort.a{background:linear-gradient(140deg,#ff7a59,#e63973)}
+.kort.b{background:linear-gradient(140deg,#17b8a6,#2563eb)}
+.kort:not(:disabled):active{transform:translateY(6px);box-shadow:0 2px 0 #0005}
+@media(hover:hover){.kort:not(:disabled):hover{transform:translateY(-3px)}}
+.kort:focus-visible{outline:4px solid var(--sun);outline-offset:3px}
+.kort .namn{font-size:clamp(30px,5.6vw,92px);font-weight:900;line-height:1.02;text-align:center;letter-spacing:-.02em;text-wrap:balance;text-shadow:0 2px 0 #0003}
+.kort .tips{font-size:clamp(12px,1.3vw,19px);opacity:.85;font-weight:600}
+.kort .varde{font-size:clamp(26px,4.2vw,68px);font-weight:800;font-variant-numeric:tabular-nums;min-height:1.2em;line-height:1.2}
+.kort .enhet{font-size:.5em;font-weight:700;opacity:.9;margin-left:.25em}
+.kort .dom{position:absolute;top:10px;right:12px;font-size:clamp(26px,3.4vw,54px);line-height:1;opacity:0;transform:scale(.3);transition:.3s cubic-bezier(.3,1.8,.5,1)}
+.kort.vinn{background:linear-gradient(140deg,#16a34a,#22c55e)}
+.kort.vinn .dom,.kort.vald .dom{opacity:1;transform:scale(1)}
+.kort.torsk{background:linear-gradient(140deg,#b91c1c,#ef4444);animation:skak .4s}
+.kort.blek{filter:saturate(.35) brightness(.75)}
+.kort.vald{outline:5px solid #fff;outline-offset:-5px}
+@keyframes skak{25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}
+.vs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:clamp(46px,6vw,88px);aspect-ratio:1;border-radius:50%;background:#1b1464;border:4px solid var(--sun);color:var(--sun);
+  display:grid;place-items:center;font-weight:900;font-size:clamp(15px,2vw,30px);z-index:2;pointer-events:none;box-shadow:0 4px 14px #0006}
+.besked{min-height:clamp(46px,6vw,76px);display:flex;align-items:center;justify-content:center;gap:12px;text-align:center}
+.besked p{margin:0;font-size:clamp(18px,2.6vw,38px);font-weight:800}
+.besked .ratt{color:#6ee7a0}.besked .fel{color:#ffb0b0}
+.knapp{appearance:none;border:0;font:inherit;font-weight:800;cursor:pointer;background:var(--sun);color:#1b1464;border-radius:999px;padding:14px 30px;font-size:clamp(18px,2.2vw,32px);box-shadow:0 6px 0 #b98a00;touch-action:manipulation}
+.knapp:active{transform:translateY(4px);box-shadow:0 2px 0 #b98a00}
+.knapp.liten{padding:9px 20px;font-size:clamp(15px,1.6vw,24px);box-shadow:0 4px 0 #b98a00}
+footer{font-size:clamp(10px,1vw,14px);opacity:.72;text-align:center;padding:6px 16px max(10px,env(safe-area-inset-bottom));line-height:1.5}
+.lager{position:fixed;inset:0;background:#0d0a3bd9;backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px;z-index:10}
+.lager[hidden]{display:none}
+.ruta{background:linear-gradient(160deg,#2b1f8f,#1b1464);border:3px solid var(--sun);border-radius:30px;padding:clamp(22px,4vw,54px);text-align:center;max-width:min(680px,100%);box-shadow:0 20px 60px #000a;animation:pop .35s cubic-bezier(.3,1.5,.5,1)}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+.ruta h2{margin:0 0 6px;font-size:clamp(28px,4.4vw,58px);line-height:1.08}
+.ruta p{margin:8px 0;font-size:clamp(16px,1.8vw,24px);opacity:.92;line-height:1.4}
+.stor{font-size:clamp(70px,13vw,160px);font-weight:900;color:var(--sun);line-height:1;font-variant-numeric:tabular-nums}
+.rad{display:flex;justify-content:center;gap:10px;margin:14px 0 20px;flex-wrap:wrap}
+.rad .stat{min-width:104px;padding:9px 14px}
+.nytt{display:inline-block;background:var(--ok);border-radius:999px;padding:5px 16px;font-weight:800;margin-bottom:8px}
+@media(min-width:760px) and (min-aspect-ratio:1/1){.duel{grid-template-columns:1fr 1fr;grid-template-rows:1fr;gap:20px}.kort{border-radius:36px}}
+@media(max-height:620px){.kort{min-height:110px}.duel{min-height:240px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <h1><small>Kommunupplagan</small>Högre eller lägre</h1>
+  <div class="stats" aria-live="off">
+    <div class="stat"><b id="sPoang">0</b><span>Poäng</span></div>
+    <div class="stat"><b id="sSvit">0</b><span>Svit</span></div>
+    <div class="stat"><b id="sBast">0</b><span>Bästa</span></div>
+  </div>
+</header>
+<main>
+  <div class="q"><span class="chip" id="chip">Duell 1</span><h2 id="fraga">&nbsp;</h2></div>
+  <div class="duel">
+    <button class="kort a" id="kA"><span class="dom"></span><span class="namn"></span><span class="varde"></span><span class="tips">Tryck för att välja</span></button>
+    <div class="vs">VS</div>
+    <button class="kort b" id="kB"><span class="dom"></span><span class="namn"></span><span class="varde"></span><span class="tips">Tryck för att välja</span></button>
+  </div>
+  <div class="besked" id="besked" aria-live="polite"></div>
+</main>
+<footer>Inofficiell demo. Källa: SCB:s öppna data.<br><span id="kallor"></span></footer>
+
+<div class="lager" id="start">
+  <div class="ruta">
+    <h2>Högre eller lägre<br><span style="color:var(--sun)">kommunupplagan</span></h2>
+    <p>Två kommuner. Ett mått. Tryck på den kommun du tror har <b>högst värde</b>.<br>Rätt svar ger poäng – ett fel och rundan är slut. Det blir jämnare för varje duell!</p>
+    <p id="startBast"></p>
+    <button class="knapp" id="startKnapp">Starta spelet</button>
+  </div>
+</div>
+<div class="lager" id="slut" hidden>
+  <div class="ruta">
+    <div class="nytt" id="nytt" hidden>★ Nytt personbästa!</div>
+    <h2 id="slutRubrik">Rundan är slut</h2>
+    <div class="stor" id="slutPoang">0</div>
+    <p style="margin-top:0">poäng</p>
+    <div class="rad">
+      <div class="stat"><b id="slutSvit">0</b><span>Rätt i rad</span></div>
+      <div class="stat"><b id="slutBast">0</b><span>Personbästa</span></div>
+      <div class="stat"><b id="slutBastSvit">0</b><span>Längsta svit</span></div>
+    </div>
+    <p id="slutFacit"></p>
+    <button class="knapp" id="igen">Spela igen</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+// Data från SCB:s öppna data (PxWebApi 2). Kolumner: namn, folkmängd, medelålder, inv/km², landareal km², medianinkomst tkr
+const K=[["Upplands Väsby",50323,40.2,669.9,75.38,369.9],["Vallentuna",35119,40.8,98.3,359.63,420.6],["Österåker",49787,41.8,159.1,313.99,412.2],["Värmdö",46635,42.4,104.4,446.52,418.3],["Järfälla",88950,39.4,1668.1,54.06,375.1],["Ekerö",28910,41.6,133,218.43,440.9],["Huddinge",114304,39.2,871.8,131.55,386.3],["Botkyrka",95905,39.3,496.1,195.02,331.8],["Salem",17507,40.4,319.4,54.38,404],["Haninge",100895,39,221.5,457.79,369.4],["Tyresö",49179,41.5,713.7,69.56,411],["Upplands-Bro",32868,38.5,141,236.39,370.6],["Nykvarn",12342,40.3,80.7,153.38,431.9],["Täby",77744,41.8,1287.1,61,469.3],["Danderyd",32425,42.8,1226,26.51,510.2],["Sollentuna",77624,40.3,1475.4,52.89,427],["Stockholm",995574,40.7,5308.9,188.22,413.6],["Södertälje",102911,40.5,195.2,526.55,336.1],["Nacka",112112,40.6,1193.3,95.31,454.2],["Sundbyberg",56274,38.7,6529.2,8.73,420.4],["Solna",85789,40.1,4462.3,19.37,444.7],["Lidingö",48377,43.1,1566.9,30.87,454.8],["Vaxholm",11822,45.8,200.9,57.93,434.2],["Norrtälje",66585,47,33,2026.36,335.4],["Sigtuna",52767,39.2,162,329.32,354.6],["Nynäshamn",30579,43.7,85.3,358.78,348.4],["Håbo",22973,41.2,161.3,144.12,395.2],["Älvkarleby",9552,44.7,43.2,221.39,333.9],["Knivsta",21193,37.8,76.6,283.65,421.6],["Heby",14345,45,12.2,1172.64,317.4],["Tierp",21104,44.8,13.6,1548.16,321.6],["Uppsala",248016,39.7,113.8,2193.84,355.8],["Enköping",48591,42.2,41.2,1184.16,355.8],["Östhammar",22138,46.5,15,1482.56,345.5],["Vingåker",8750,46.3,23.3,372.06,311.5],["Gnesta",11458,44.8,24.5,463.17,342.1],["Nyköping",58344,44.1,40.9,1424.38,345.4],["Oxelösund",12031,46.1,340.5,35.13,339.1],["Flen",15362,47.6,20.9,721.09,299.6],["Katrineholm",34154,44,33.2,1024.07,321],["Eskilstuna",107203,42.2,96.7,1104.13,328.4],["Strängnäs",39313,43.8,53,742.63,367.1],["Trosa",14927,45.1,70.9,210.03,383.1],["Ödeshög",5237,46.8,12,435.67,325.6],["Ydre",3626,48.6,5.3,678.25,328.9],["Kinda",9957,46.2,8.7,1134.32,341],["Boxholm",5517,46.2,10.3,528.04,343.6],["Åtvidaberg",11467,45.7,16.7,689.43,332.5],["Finspång",21623,45.1,20.3,1060.04,339.7],["Valdemarsvik",7525,49.2,10.2,736.98,305.3],["Linköping",168035,40.5,117.7,1433.8,357.2],["Norrköping",144980,41.8,96.5,1501.34,344.6],["Söderköping",14789,45.3,21.8,676.37,354.1],["Motala",43505,44.9,43.7,987.16,333.6],["Vadstena",7490,50.1,38.9,192.4,333.6],["Mjölby",28695,42.6,52.5,549.26,357.2],["Aneby",6797,43.8,13.2,519.9,345.5],["Gnosjö",9131,44.1,21.3,422.32,355],["Mullsjö",7594,43.6,37.5,200.98,347.4],["Habo",13456,39.5,41,329.86,385.5],["Gislaved",28936,43.6,25.1,1141.9,351],["Vaggeryd",14825,41.8,18,828.38,362.3],["Jönköping",147654,41,99.7,1486.35,359.9],["Nässjö",31587,42.7,33.7,934.05,337.2],["Värnamo",34542,43.7,28.3,1221.13,363.1],["Sävsjö",11563,43.5,16.9,681.78,321.7],["Vetlanda",27528,44.5,18.1,1506.47,334.4],["Eksjö",17792,44.9,22,802.81,337.5],["Tranås",18604,44.7,45.9,404.28,334.8],["Uppvidinge",9061,45.3,7.6,1176.77,325.2],["Lessebo",8289,44.5,19.6,414.25,308.8],["Tingsryd",11966,47.9,11.3,1048.73,311.3],["Alvesta",19830,43.5,20.1,977.8,331.7],["Älmhult",17653,42.4,19.7,893.98,359.4],["Markaryd",9938,45.1,19,519.25,322.8],["Växjö",98334,40.6,59.2,1671.84,349.9],["Ljungby",28280,45,16,1755.32,342.5],["Högsby",5321,48.5,6.8,753.77,279.3],["Torsås",6984,48.1,14.7,470.28,311],["Mörbylånga",16224,46.4,24.4,668.26,350.6],["Hultsfred",13673,46.7,12,1126.37,303.7],["Mönsterås",13069,46.5,21.6,601.44,335.3],["Emmaboda",9006,47.6,12.7,692.25,312.9],["Kalmar",72704,41.9,76.1,960.06,349.2],["Nybro",19951,45.1,16.8,1176.57,314],["Oskarshamn",26923,45.1,25.5,1050.23,357.3],["Västervik",36447,47.6,19.3,1881.98,322.3],["Vimmerby",15384,45.5,13.4,1144.95,339.5],["Borgholm",10666,53.3,15.6,679.82,302.2],["Gotland",60971,46.3,19.3,3150.2,323.7],["Olofström",13000,46.7,32.8,391.29,319.5],["Karlskrona",66301,43.5,63.1,1046.7,356.5],["Ronneby",28741,44.8,34.7,828.41,318.2],["Karlshamn",31751,45.6,64.5,490.55,334.1],["Sölvesborg",17430,46.7,93.6,185.95,334.8],["Svalöv",14543,41.4,37.3,388.3,346.7],["Staffanstorp",27303,40.4,256.4,107.19,405.9],["Burlöv",20101,39.8,1077.1,18.98,329.4],["Vellinge",37816,44.2,264.2,143.21,437.4],["Östra Göinge",13978,44.3,31.7,433.16,313.1],["Örkelljunga",10277,44.7,32.1,320.57,316.8],["Bjuv",15985,41.1,138.6,115.78,329.2],["Kävlinge",32477,41.6,213.3,153.1,397.5],["Lomma",24715,43.6,442.9,55.72,466.3],["Svedala",23581,40,108.6,218.46,396],["Skurup",17099,42.3,88.3,194.08,352.2],["Sjöbo",19337,44.7,39.3,493.78,334.3],["Hörby",15562,44.7,37,420.85,331.4],["Höör",17518,43,60.6,291.68,352.8],["Tomelilla",13639,45.7,34.4,397.49,311.2],["Bromölla",12470,45,76.6,163.16,328.6],["Osby",12947,45.5,22.3,577.43,319.9],["Perstorp",7235,43.3,44.6,159.45,296.5],["Klippan",17714,43.9,47.1,375.76,319.8],["Åstorp",16449,40.2,177.9,92.72,328],["Båstad",16026,48.6,73.6,218.06,349.1],["Malmö",365644,39.2,2336.8,157.45,336.5],["Lund",131590,39.7,309,428.22,339.2],["Landskrona",47309,42.6,338,140.76,323.3],["Helsingborg",152091,41.7,442.8,345.04,344.8],["Höganäs",28430,46.3,197.7,144.13,364.7],["Eslöv",34922,41.3,83.5,420.54,344.4],["Ystad",32106,46.8,91.7,351.07,349.3],["Trelleborg",47269,43.3,138.8,341.46,345.7],["Kristianstad",86379,43.4,68.8,1249.34,335.6],["Simrishamn",18890,51.2,47.7,393.85,310.4],["Ängelholm",45110,44.7,107.1,421.51,360.6],["Hässleholm",52114,44.2,40.7,1274.47,319.4],["Hylte",10196,44,10.6,950.85,331],["Halmstad",106084,42.2,104.4,1018.23,345],["Laholm",26595,45.3,30,886.32,331.9],["Falkenberg",47337,44.6,42.5,1113.17,338],["Varberg",69070,44.4,79.6,872.91,364.3],["Kungsbacka",85792,43,141.7,609.37,420.5],["Härryda",40003,40.9,149.3,267.97,432.2],["Partille",41060,40.3,720.8,57.11,412.8],["Öckerö",12771,47.3,496.8,25.89,391.4],["Stenungsund",27851,42.7,110,253.22,403],["Tjörn",16092,47.7,95.1,168.21,384.5],["Orust",15352,48.9,39.5,388.55,345.2],["Sotenäs",9104,51.7,65,138.97,357.3],["Munkedal",10354,45.3,16.1,637.34,333.1],["Tanum",12773,48.5,13.7,922.15,339.1],["Dals-Ed",4606,47.4,6.3,727.92,319.6],["Färgelanda",6376,46.1,10.6,592.02,320.3],["Ale",32576,40.3,102.4,318.54,387.2],["Lerum",43570,40.9,168.4,259.84,422.4],["Vårgårda",12474,42,29.1,428.57,358.9],["Bollebygd",9802,43,37,264.58,383.8],["Grästorp",5555,46.4,21.1,265.72,339.6],["Essunga",5560,45.7,23.6,235.66,326.1],["Karlsborg",7023,47.7,17.3,407.73,342.1],["Gullspång",5031,50.6,15.6,317.49,297.6],["Tranemo",11839,45.2,16,744.35,346.2],["Bengtsfors",9076,48.6,10.1,887.57,308.2],["Mellerud",9052,46.7,17.5,516.25,308.7],["Lilla Edet",14442,42.4,45.4,317.12,352.6],["Mark",35155,44,37.6,933.65,343],["Svenljunga",10747,45.5,11.5,923.82,323.8],["Herrljunga",9497,45,19,499.68,338.4],["Vara",16088,44.9,22.9,700.06,329.6],["Götene",13286,45.8,32.5,406.66,348.9],["Tibro",11338,44.5,51.3,220.79,333],["Töreboda",9043,46.1,16.7,543.18,304.4],["Göteborg",608993,39.8,1362.2,450.22,369],["Mölndal",71420,40.2,491.9,146.62,421],["Kungälv",50313,42.3,138.6,364.38,403.9],["Lysekil",13907,49.5,65.8,209.59,340.3],["Uddevalla",57010,43.1,88.5,640.96,347.8],["Strömstad",13482,43.9,28.8,470.11,358.9],["Vänersborg",40041,43.9,62,646.72,343.6],["Trollhättan",59003,41.6,144,411.66,347],["Alingsås",42722,43.2,90.4,474.28,364.5],["Borås",114872,41.6,126.1,914.08,345.1],["Ulricehamn",24985,44.4,23.8,1050.4,346.1],["Åmål",11906,47.2,24.2,482.72,313.1],["Mariestad",24583,45.9,40.3,606.53,344.3],["Lidköping",40425,44.6,57.6,700.41,356.5],["Skara",18707,43.8,43.6,430.4,346.3],["Skövde",57995,41.4,86.1,676.63,371.6],["Hjo",9350,45.7,31.3,298.28,340.4],["Tidaholm",12805,44.8,24.5,520.01,338.5],["Falköping",32806,43.3,31.2,1049.47,336.2],["Kil",12061,44.4,33.3,361.52,349.2],["Eda",8412,45.9,10.1,824.56,328],["Torsby",11321,48.2,2.7,4184.08,328.5],["Storfors",3788,49.2,9.6,393.61,321.3],["Hammarö",16992,42,281.8,60.09,411.4],["Munkfors",3625,47.3,25.6,142.28,309.6],["Forshaga",11520,43.7,32.7,349.9,341.5],["Grums",9004,46.3,22.8,388.21,322.5],["Årjäng",9825,45.9,6.9,1417.01,346.1],["Sunne",13356,46.1,10.3,1294.52,330.6],["Karlstad",98084,42.2,84.3,1174.87,352.4],["Kristinehamn",23756,46.8,31,760.19,317.6],["Filipstad",9776,48,6.2,1541.4,291.6],["Hagfors",11418,49,6.2,1833.44,308.8],["Arvika",25547,46.1,15.3,1659.12,333.4],["Säffle",14899,47.3,12,1228.55,310.1],["Lekeberg",8606,41.9,18.5,465.22,361],["Laxå",5423,48.1,8.9,604.66,311.6],["Hallsberg",16120,43.4,25.1,639.66,337.3],["Degerfors",9278,47.4,23.9,385.73,322.5],["Hällefors",6321,48.2,6.3,989.73,292.7],["Ljusnarsberg",4369,50.8,7.4,578.34,282.6],["Örebro",160140,40.8,116.6,1378.51,342.9],["Kumla",22681,41.7,110.8,204.51,354.4],["Askersund",11477,47.7,13.9,820.44,337.1],["Karlskoga",30180,45,64,470.46,348.4],["Nora",10639,46.6,17.1,621.48,334.8],["Lindesberg",23141,45.4,16.6,1384,328],["Skinnskatteberg",4256,48.4,6.4,662.56,309.9],["Surahammar",9845,44.9,28.2,345.6,341.3],["Kungsör",8694,44.6,42,203.5,329.1],["Hallstahammar",16653,43.6,97.4,170.4,337.4],["Norberg",5452,47.1,12.7,419.84,318.7],["Västerås",160634,41.7,167.5,962.42,360.6],["Sala",22843,45.2,19.3,1172.58,328.7],["Fagersta",13072,44.5,47.8,270.34,326.8],["Köping",25729,44.6,42.2,607.08,329.2],["Arboga",13980,46,42.6,326.73,324.4],["Vansbro",6752,46.7,4.4,1547.62,314.5],["Malung-Sälen",10254,46.9,2.5,4105.91,337.9],["Gagnef",10384,44.8,13.4,770.96,339.8],["Leksand",16137,47.4,13.2,1227.57,329.5],["Rättvik",10998,49.8,5.7,1930.46,310.6],["Orsa",6851,47,4,1739.65,309.2],["Älvdalen",6882,48,1,6908.75,319.7],["Smedjebacken",10823,47.8,11.3,952.57,346.1],["Mora",20540,46.7,7.2,2826.74,339.5],["Falun",59945,43.5,29.3,2049.88,359.6],["Borlänge",51425,42.5,87.5,586.74,336.5],["Säter",11223,45.7,19.6,573.09,342.2],["Hedemora",15281,46.4,17.9,838.63,323.6],["Avesta",22417,45.6,36.3,616.17,334.4],["Ludvika",26634,44.2,17.9,1497.59,338.6],["Ockelbo",5715,48.5,5.3,1070.14,306.5],["Hofors",9281,46.5,22.2,411.93,337.1],["Ovanåker",11341,46.8,6,1882.88,315.7],["Nordanstig",9262,46.2,6.7,1377.6,309],["Ljusdal",18445,47.1,3.5,5283.71,314.1],["Gävle",103838,42.8,64.2,1621.46,349.4],["Sandviken",38360,45.1,32.5,1171.37,333.4],["Söderhamn",24545,47.6,22.7,1065.09,314.4],["Bollnäs",26243,45.9,14.3,1823.39,314],["Hudiksvall",37528,46,14.9,2500.22,335.8],["Ånge",9044,47.7,2.9,3066.5,322.5],["Timrå",17521,45,22.2,787.68,350],["Härnösand",24515,45.9,22.9,1064.42,324.7],["Sundsvall",99048,43.7,30.9,3206.97,364.6],["Kramfors",17491,48.1,10.2,1704.7,310.2],["Sollefteå",18396,47.4,3.3,5427.44,309],["Örnsköldsvik",55443,44.8,8.6,6415.89,354.2],["Ragunda",5146,48.1,2,2524.79,306.9],["Bräcke",6035,48.7,1.7,3426.54,307.6],["Krokom",15680,42.5,2.6,6188.44,362.4],["Strömsund",11023,48.3,1,10523.21,297.8],["Åre",12693,41,1.8,7236.33,351],["Berg",7108,46.8,1.2,5741.39,306.6],["Härjedalen",10175,47.9,0.9,11344.46,323.8],["Östersund",64979,42.9,29.3,2220.33,347.4],["Nordmaling",6942,46.7,5.6,1238.88,329.3],["Bjurholm",2359,47,1.8,1315.18,301.8],["Vindeln",5417,45.5,2,2648.22,323.1],["Robertsfors",6690,46.3,5.1,1302.11,332.9],["Norsjö",3968,47.3,2.2,1751.14,325],["Malå",2962,46.8,1.8,1608.68,331.7],["Storuman",5577,48.2,0.8,7341.78,320.2],["Sorsele",2357,48.4,0.3,7411.06,320.7],["Dorotea",2294,49.8,0.8,2780.42,313.8],["Vännäs",9132,41.8,17.3,533.17,354.1],["Vilhelmina",6229,46.4,0.8,8094.02,306.6],["Åsele",2694,47.9,0.6,4248.88,298.9],["Umeå",134249,40.1,58,2333.35,359.6],["Lycksele",12118,44,2.2,5553.34,339.6],["Skellefteå",78150,43.9,11,6852.74,372.3],["Arvidsjaur",6089,46.7,1.1,5694.2,340.4],["Arjeplog",2599,49,0.2,12635.46,332.1],["Jokkmokk",4701,48.3,0.3,17718.88,331.8],["Överkalix",3201,50.2,1.1,2789.18,300.4],["Kalix",15391,47.9,8.4,1819.66,332.2],["Övertorneå",4057,51.7,1.7,2380.48,298.7],["Pajala",5857,49.2,0.7,7910.29,318.8],["Gällivare",17233,45.3,1.1,15812.72,411.2],["Älvsbyn",7774,45.8,4.6,1712.19,331.6],["Luleå",79645,42.9,38.1,2106.61,375.8],["Piteå",42447,44.5,13.6,3109.89,364.2],["Boden",28049,44.9,7.1,4046.09,357.5],["Haparanda",9151,48.4,9.7,930.08,299.9],["Kiruna",22426,43,1.2,19307,414.3]];
+const MATT=[
+ {i:1,namn:"Folkmängd",fraga:"Vilken kommun har <em>störst folkmängd</em>?",enhet:"invånare",dec:0,tab:"TAB638",ar:2024},
+ {i:2,namn:"Medelålder",fraga:"Vilken kommun har <em>högst medelålder</em>?",enhet:"år",dec:1,tab:"TAB637",ar:2025},
+ {i:3,namn:"Befolkningstäthet",fraga:"Vilken kommun är <em>mest tätbefolkad</em>?",enhet:"inv/km²",dec:1,tab:"TAB628",ar:2025},
+ {i:4,namn:"Landareal",fraga:"Vilken kommun har <em>störst landareal</em>?",enhet:"km²",dec:0,tab:"TAB628",ar:2025},
+ {i:5,namn:"Medianinkomst",fraga:"Vilken kommun har <em>högst medianinkomst</em>?",enhet:"kr/år",dec:0,mult:1000,tab:"TAB6313",ar:2024,not:"sammanräknad förvärvsinkomst, 20+ år"}
+];
+MATT.forEach(m=>{m.ordning=K.map((_,n)=>n).sort((x,y)=>K[x][m.i]-K[y][m.i])});
+const $=id=>document.getElementById(id);
+const NB=" ";
+function fmt(v,dec){const s=Math.abs(v).toFixed(dec).split(".");s[0]=s[0].replace(/\B(?=(\d{3})+(?!\d))/g,NB);return (v<0?"−":"")+s.join(",")}
+const NYCKEL="kommunspelet.v1";
+function las(){try{const o=JSON.parse(localStorage.getItem(NYCKEL)||"{}");return{poang:+o.poang||0,svit:+o.svit||0}}catch(e){return{poang:0,svit:0}}}
+function spara(o){try{localStorage.setItem(NYCKEL,JSON.stringify(o))}catch(e){}}
+let bast=las(),poang=0,svit=0,nr=0,nu=null,last=false,timer=null,senasteMatt=-1,anvanda=[];
+const slump=n=>Math.floor(Math.random()*n);
+
+function nyDuell(){
+  let mi;do{mi=slump(MATT.length)}while(mi===senasteMatt);senasteMatt=mi;
+  const m=MATT[mi],N=K.length;
+  // Svårighet: avstånd i rangordning krymper för varje duell
+  const lo=Math.max(3,200-nr*22),hi=Math.max(24,289-nr*28);
+  let a,b,forsok=0;
+  do{
+    const gap=lo+slump(hi-lo+1),p=slump(N-gap);
+    a=m.ordning[p];b=m.ordning[p+gap];forsok++;
+  }while(forsok<200&&(K[a][m.i]===K[b][m.i]||anvanda.includes(a)||anvanda.includes(b)));
+  anvanda.push(a,b);if(anvanda.length>40)anvanda.splice(0,2);
+  if(Math.random()<.5)[a,b]=[b,a];
+  nu={m,a,b};
+}
+function visa(){
+  nyDuell();last=false;
+  $("chip").textContent="Duell "+(nr+1)+" · "+nu.m.namn;
+  $("fraga").innerHTML=nu.m.fraga;
+  [["kA",nu.a],["kB",nu.b]].forEach(([id,k])=>{
+    const el=$(id);el.className="kort "+(id==="kA"?"a":"b");el.disabled=false;
+    el.querySelector(".namn").textContent=K[k][0];
+    el.querySelector(".varde").textContent="";
+    el.querySelector(".dom").textContent="";
+    el.querySelector(".tips").hidden=false;
+    el.setAttribute("aria-label",K[k][0]);
+  });
+  $("besked").innerHTML="";
+  uppdStat();
+}
+function uppdStat(){$("sPoang").textContent=poang;$("sSvit").textContent=svit;$("sBast").textContent=Math.max(bast.poang,poang)}
+function raknaUpp(el,mal,m){
+  const t0=performance.now(),tid=1100,mult=m.mult||1,slutv=mal*mult;
+  const reducerad=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  function steg(t){
+    let p=reducerad?1:Math.min(1,(t-t0)/tid);const e=1-Math.pow(1-p,3);
+    el.innerHTML=fmt(slutv*e,p<1&&m.dec===0?0:m.dec)+'<span class="enhet">'+m.enhet+"</span>";
+    if(p<1)requestAnimationFrame(steg);
+  }
+  requestAnimationFrame(steg);
+}
+function gissa(val){
+  if(last||!nu)return;last=true;
+  const {m,a,b}=nu,va=K[a][m.i],vb=K[b][m.i];
+  const vinnare=va>vb?"kA":"kB",ratt=val===vinnare;
+  ["kA","kB"].forEach(id=>{
+    const el=$(id);el.disabled=true;el.querySelector(".tips").hidden=true;
+    raknaUpp(el.querySelector(".varde"),id==="kA"?va:vb,m);
+  });
+  $(val).classList.add("vald");
+  clearTimeout(timer);
+  timer=setTimeout(()=>{
+    const v=$(vinnare),f=$(vinnare==="kA"?"kB":"kA");
+    v.classList.add("vinn");v.querySelector(".dom").textContent=ratt?"✓":"▲";
+    if(ratt){f.classList.add("blek")}else{f.classList.add("torsk");f.querySelector(".dom").textContent="✗"}
+    const vn=K[va>vb?a:b][0];
+    if(ratt){
+      const p=10+nr*2;poang+=p;svit++;nr++;
+      $("besked").innerHTML='<p class="ratt">✓ Rätt! +'+p+' poäng</p><button class="knapp liten" id="nasta">Nästa →</button>';
+      $("nasta").onclick=nasta;$("nasta").focus({preventScroll:true});
+      timer=setTimeout(nasta,3200);
+    }else{
+      $("besked").innerHTML='<p class="fel">✗ Fel – '+vn+' ligger högst</p><button class="knapp liten" id="nasta">Se resultat</button>';
+      $("nasta").onclick=slut;
+      timer=setTimeout(slut,3800);
+    }
+    uppdStat();
+  },1200);
+}
+function nasta(){clearTimeout(timer);visa()}
+function slut(){
+  clearTimeout(timer);
+  const nyttP=poang>bast.poang;
+  if(nyttP)bast.poang=poang;if(svit>bast.svit)bast.svit=svit;spara(bast);
+  $("nytt").hidden=!(nyttP&&poang>0);
+  $("slutRubrik").textContent=svit===0?"Aj då!":svit<5?"Bra kämpat!":svit<10?"Snyggt jobbat!":"Kommunmästare!";
+  $("slutPoang").textContent=poang;$("slutSvit").textContent=svit;$("slutBast").textContent=bast.poang;$("slutBastSvit").textContent=bast.svit;
+  const {m,a,b}=nu,mult=m.mult||1;
+  $("slutFacit").textContent=m.namn+": "+K[a][0]+" "+fmt(K[a][m.i]*mult,m.dec)+" – "+K[b][0]+" "+fmt(K[b][m.i]*mult,m.dec)+" "+m.enhet;
+  $("slut").hidden=false;$("igen").focus({preventScroll:true});uppdStat();
+}
+function start(){clearTimeout(timer);poang=0;svit=0;nr=0;anvanda=[];$("start").hidden=true;$("slut").hidden=true;visa()}
+$("kA").onclick=()=>gissa("kA");$("kB").onclick=()=>gissa("kB");
+$("startKnapp").onclick=start;$("igen").onclick=start;
+addEventListener("keydown",e=>{
+  if(!$("start").hidden||!$("slut").hidden)return;
+  if(e.key==="ArrowLeft"||e.key==="ArrowUp"||e.key==="1")gissa("kA");
+  else if(e.key==="ArrowRight"||e.key==="ArrowDown"||e.key==="2")gissa("kB");
+});
+$("kallor").textContent=MATT.map(m=>m.namn+(m.not?" ("+m.not+")":"")+": "+m.tab+", "+m.ar).join(" · ");
+if(bast.poang>0)$("startBast").innerHTML="Ditt personbästa: <b>"+bast.poang+" poäng</b> · längsta svit "+bast.svit;
+uppdStat();
+// Förhandsvisa en duell bakom startskärmen
+nyDuell();$("kA").querySelector(".namn").textContent=K[nu.a][0];$("kB").querySelector(".namn").textContent=K[nu.b][0];$("fraga").innerHTML=nu.m.fraga;senasteMatt=-1;
+</script>
+</body>
+</html>
